@@ -119,4 +119,4 @@ const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, "latest"); //get la
 
 //addPerson("name2",22,222,"myAddress2");
 getPersonDetail("myAddress2");
-//updateNumber("myAddress2", 333)
+//updateNumber("myAddress2", 444)
