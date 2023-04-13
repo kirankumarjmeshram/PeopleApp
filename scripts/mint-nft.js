@@ -68,19 +68,55 @@ async function getPersonDetail(myAddress) {
   });
 }
 
+// async function updateNumber(myAddress, newMyNumber) {
+//   nftContract.methods.updateNumber(myAddress, newMyNumber).call((error, result)=>{
+//     if(error){
+//       console.log(error);
+//     }
+//     else{
+//       console.log("myNumber is Updated")
+//     }
+//   });
+// }
 async function updateNumber(myAddress, newMyNumber) {
-  nftContract.methods.updateNumber(myAddress, newMyNumber).call((error, result)=>{
-    if(error){
-      console.log(error);
-    }
-    else{
-      console.log("myNumber is Updated")
-    }
-  });
-}
+const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, "latest"); //get latest nonce
 
+  //the transaction
+  const tx = {
+    from: PUBLIC_KEY,
+    to: contractAddress,
+    nonce: nonce,
+    gas: 500000,
+    data: nftContract.methods.updateNumber(myAddress, newMyNumber).encodeABI(),
+  };
 
+  const signPromise = web3.eth.accounts.signTransaction(tx, PRIVATE_KEY);
+  signPromise
+    .then((signedTx) => {
+      web3.eth.sendSignedTransaction(
+        signedTx.rawTransaction,
+        function (err, hash) {
+          if (!err) {
+            console.log(
+              "The hash of your transaction is: ",
+              hash,
+              "\nCheck Alchemy's Mempool to view the status of your transaction!"
+            );
+          } else {
+            console.log(
+              "Something went wrong when submitting your transaction:",
+              err
+            );
+          }
+        }
+      );
+    })
+    .catch((err) => {
+      console.log(" Promise failed:", err);
+    });
 
-//addPerson("name1",11,111,"myAddress1");
-getPersonDetail("myAddress1");
-//updateNumber("myAddress2", 33)
+  }
+
+//addPerson("name2",22,222,"myAddress2");
+getPersonDetail("myAddress2");
+//updateNumber("myAddress2", 333)
